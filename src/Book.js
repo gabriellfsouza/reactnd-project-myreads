@@ -11,9 +11,17 @@ class Book extends React.Component{
     
     static propTypes = {
         book : PropTypes.object.isRequired,
-        fnRender : PropTypes.func.isRequired
+        fnRender : PropTypes.func
     }
 
+    state = {
+        book:{}
+    }
+
+    componentWillMount(){
+        const {book} = this.props;
+        this.setState({book});
+    }
 
     /**
      * Atualiza a estante em que o livro se encontra.
@@ -24,7 +32,8 @@ class Book extends React.Component{
     shelfChanger = (e,book,fnRender)=>{
         const id = e.currentTarget.value;
         
-        //debugger;
+        this.setState({book:{...book,shelf:id}})
+        debugger;
         BooksAPI.update(book,id)
         .then(result=>{
             //console.log(result);
@@ -33,16 +42,17 @@ class Book extends React.Component{
         })
         .then(book=>{
             if(fnRender) fnRender();
+            //else this.setState({book});
         });
     };
 
     render(){
-        const {book,fnRender} = this.props;
+        const {book} = this.state;
+        const {fnRender} = this.props;
         let {title,authors,imageLinks} = book;
         authors = authors || [];
         
         const {bookshelves} = Utils;
-
         //const obj = bookshelves.map(bs=>{return {value:bs.id,text:bs.title};});
 
         return (
@@ -53,7 +63,7 @@ class Book extends React.Component{
                 <select onChange={e=>{this.shelfChanger(e,book,fnRender)}} value={book.shelf}>
                     <option value="move" disabled>Move to...</option>
                     {bookshelves.map(bs=>(
-                        <option key={bs.id} value={bs.id}>{bs.title}</option>
+                        <option key={bs.id} value={bs.id}>{book.shelf === bs.id && '✔ '}{bs.title}</option>
                     ))};
                 </select>
                 </div>

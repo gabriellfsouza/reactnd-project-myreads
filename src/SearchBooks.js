@@ -15,7 +15,7 @@ class SearchBooks extends React.Component{
      * @param {Object} e evento de mudança, aplicado no campo de busca
      */
     searchChange = (e)=>{
-
+      debugger;
       const query = e.currentTarget.value;
       
       if(query){
@@ -48,12 +48,6 @@ class SearchBooks extends React.Component{
       
     }
 
-    /**
-     * Função utilizada para forçar a renderização da página.
-     */
-    bookRender = ()=>{
-      this.setState(currentState=>currentState);
-    }
 
     render(){
         const {books} = this.state;
@@ -71,8 +65,14 @@ class SearchBooks extends React.Component{
                   However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
                   you don't find a specific author or title. Every search is limited by search terms.
                 */}
-                <input type="text" placeholder="Search by title or author" onChange={this.searchChange}/>
-
+                <input 
+                  type="search" 
+                  placeholder="Search by title or author" 
+                  autoFocus
+                  onMouseUp={(e)=>{setTimeout(()=>this.searchChange(e),1)}}
+                  
+                  onChange={this.searchChange}
+                />
               </div>
             </div> 
 
@@ -81,7 +81,6 @@ class SearchBooks extends React.Component{
                 <li key={book.id}>
                   
                     <Book 
-                    fnRender={this.bookRender}
                     book={book}
                   />
                 </li>
