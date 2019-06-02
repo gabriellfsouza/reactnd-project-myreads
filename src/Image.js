@@ -18,7 +18,8 @@ class Image extends Component{
         //debugger;
         const {width,height} = img;
 
-        this.setState({dimensions:{width,height}});
+        //this.setState({dimensions:{width,height}});
+        this.setState({dimensions:{ width: 128, height: 160,}});
     }
 
     render(){

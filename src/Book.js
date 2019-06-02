@@ -18,7 +18,7 @@ class Book extends React.Component{
         book:{}
     }
 
-    componentWillMount(){
+    componentDidMount(){
         const {book} = this.props;
         this.setState({book});
     }

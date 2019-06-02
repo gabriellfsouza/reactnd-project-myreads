@@ -15,7 +15,7 @@ class MyReads extends React.Component{
   /**
    * Executa operação para carregar os livros antes de iniciar o componente.
    */
-  componentWillMount(){
+  componentDidMount(){
     this.bookRender();
   }
 

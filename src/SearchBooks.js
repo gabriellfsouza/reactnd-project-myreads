@@ -2,6 +2,7 @@ import React from 'react';
 import ButtonLink from './ButtonLink';
 import * as BooksAPI from './BooksAPI'
 import Book from './Book';
+import debounce from 'lodash.debounce'
 
 
 class SearchBooks extends React.Component{
@@ -14,39 +15,38 @@ class SearchBooks extends React.Component{
      * Lógica para realizar a busca, incluindo a propriedade shelf no objeto book após a função de busca.
      * @param {Object} e evento de mudança, aplicado no campo de busca
      */
-    searchChange = (e)=>{
-      debugger;
-      const query = e.currentTarget.value;
-      
-      if(query){
-        let allBooksShelves = []
-        ,   allBooksSearch = [];
+    searchChange = (currentTarget) => {
+      const query = currentTarget.value;
 
-        BooksAPI.getAll().then(books=>{
+      let allBooksShelves = []
+
+      BooksAPI.getAll().then(books => {
           allBooksShelves = books;
           return BooksAPI.search(query);
-        })
-        .then(result=>{
-          let books = [];
-          if (!result.error) books = result;
-          allBooksSearch = books;
+      }).then(result => {
+          const allBooksSearch = (result && !result.error) ? result : [];
           return Promise
-          .resolve(allBooksSearch.map(book => {
-              let bsf = allBooksShelves.find(bs=>bs.id===book.id);
-              book.shelf = (bsf) ? bsf.shelf : 'none';
-              return book;
-            })
+              .resolve(allBooksSearch.map(book => {
+                  let bsf = allBooksShelves.find(bs => bs.id === book.id);
+                  book.shelf = (bsf) ? bsf.shelf : 'none';
+                  return book;
+              })
           );
-        })
-        .then((books)=>{
-          this.setState({books});
-        });
-      }else{
-          this.setState({books:[]});
-      }
+      }).then((books) => {
+          this.setState({ books });
+      })
+  }
 
-      
+    handleOnchange = (e)=>{
+      //const {value = ''} = e.currentTarget;
+      const {currentTarget} = e;
+      this.debouncedSearchChange(currentTarget);
     }
+
+    debouncedSearchChange = debounce((currentTarget)=>{
+      debugger;
+      return this.searchChange(currentTarget)
+    },500)
 
 
     render(){
@@ -69,9 +69,9 @@ class SearchBooks extends React.Component{
                   type="search" 
                   placeholder="Search by title or author" 
                   autoFocus
-                  onMouseUp={(e)=>{setTimeout(()=>this.searchChange(e),1)}}
+                  onMouseUp={this.handleOnchange}
                   
-                  onChange={this.searchChange}
+                  onChange={this.handleOnchange}
                 />
               </div>
             </div> 
